@@ -7,6 +7,7 @@ import Header from './Components/Header'
 import {loginWithToken} from './Store/Actions/auth'
 import UserManager from './Components/UserManager';
 import AdminEditor from './Components/auth/AdminEditor';
+import EditorLayout from './Components/Layout/EditorLayout';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
       <div className="App">
         <Header />
         <Switch>
+          <Route exact path = "/" component={EditorLayout} />
           <Route path="/user" component={UserManager} />
           <Route path="/admin" component={AdminEditor} />
         </Switch>

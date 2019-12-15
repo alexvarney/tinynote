@@ -2,10 +2,25 @@ import React from "react";
 import { connect } from "react-redux";
 import { logout } from "../Store/Actions/auth";
 import { Link } from "react-router-dom";
+import styled from 'styled-components'
 
 function Header(props) {
+
+  const Nav = styled.nav`
+    background: dimgray;
+    color: #fff;
+    a, a:visited {
+      color: #fff;
+    }
+    a:hover {
+      color: lightgrey;
+      text-decoration: none;
+    }
+
+  `
+
   return (
-    <nav className="navbar navbar-light bg-light">
+    <Nav className="navbar">
       <span className="navbar-brand mb-0 h1"><Link to="/">tinynote</Link></span>
 
       {props.auth.loggedIn && props.auth.user ? (
@@ -29,7 +44,7 @@ function Header(props) {
           </a>
         </div>
       ) : <Link to={'/user'}>Login</Link>}
-    </nav>
+    </Nav>
   );
 }
 
