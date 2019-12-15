@@ -2,8 +2,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var bcrypt = require('bcryptjs');
 var mongoose = require('mongoose');
+
+var User = require('./models/User');
 
 mongoose
   .connect(process.env.MONGO_HOST, { useNewUrlParser: true })
@@ -27,7 +29,7 @@ mongoose
         .catch(err => console.log(err));
     }
   })
-  .catch(err => Console.log(err));
+  .catch(err => console.log(err));
 
 
 var apiRouter = require('./routes/api/apiRouter');
