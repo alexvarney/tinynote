@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 function Header(props) {
   return (
     <nav className="navbar navbar-light bg-light">
-      <span className="navbar-brand mb-0 h1"><Link to="/">MERN JWT Boilerpate</Link></span>
+      <span className="navbar-brand mb-0 h1"><Link to="/">tinynote</Link></span>
 
       {props.auth.loggedIn && props.auth.user ? (
         <div className="userInfo">
