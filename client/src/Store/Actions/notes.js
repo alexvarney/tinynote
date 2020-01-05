@@ -36,3 +36,7 @@ export const updateNote = (note, token) => dispatch => {
       console.log(err);
     });
 };
+
+export const addNewNote = note => dispatch => {
+  dispatch({type: actionTypes.notes.updateNote, payload: note})
+}
