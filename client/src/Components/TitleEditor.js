@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -21,6 +21,9 @@ const Container = styled.div`
     color: #434343;
   }
 
+  input:focus{
+    outline: none;
+  }
 `;
 
 const inputFlex = styled.div`
@@ -29,14 +32,15 @@ const inputFlex = styled.div`
   width: 100%;
 `
 
-export default function TitleEditor({ value, onChange, onSave=()=>{} }) {
+export default function TitleEditor({value, onChange, onSave=()=>{}, note={_id:null}}) {
+
+  const inputElement = useRef(null);
+
   const [isEditing, setEditing] = useState(false);
   const expand = () => {
-    
-    if(!isEditing){
       setEditing(true)
-    }
-
+      setTimeout(()=>inputElement.current.focus(), 0);
+      
   };
 
   const save = (e) => {
@@ -45,15 +49,17 @@ export default function TitleEditor({ value, onChange, onSave=()=>{} }) {
     onSave();
   }
 
+  useEffect(() => {
+    setEditing(false);
+  }, [note._id])
+
   return (
     <Container onClick={expand}>
-      {isEditing ? (<>
-        <input value={value} onChange={onChange} />
+      <div style={{display: isEditing? 'inline': 'none'}}>
+        <input ref={inputElement} value={value} onChange={onChange} />
         <i onClick={save} className="fas fa-check"></i>
-</>
-      ) : (
-        <h1>{value}</h1>
-      )}
+      </div>
+      <h1 style={{display: !isEditing? 'inline': 'none'}}>{value}</h1>
     </Container>
   );
 }
