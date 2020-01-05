@@ -6,7 +6,8 @@ const Container = styled.div`
     margin: 0.75rem;
     border-radius: 0.5rem;
     box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
+    background: ${props => props.selected ? '#838383' : '#ffffff'};
+    color: ${props => props.selected ? '#ffffff' : '#434343'};
     cursor: pointer;
 
     h1 {
@@ -15,7 +16,6 @@ const Container = styled.div`
       font-weight: normal;
       font-size: 24px;
       line-height: 21px;
-      color: #434343;
       margin-bottom: 0.75rem;
     }
     p{
@@ -27,10 +27,10 @@ const Container = styled.div`
     }
 `
 
-export default function NoteListCard({note, onClick}) {
+export default function NoteListCard({note, onClick, selected=false}) {
 
   return (
-    <Container onClick={onClick}>
+    <Container onClick={onClick} selected={selected}>
       <h1>{note.noteTitle}</h1>
       <p>{note.noteMarkdown}</p>
     </Container>
