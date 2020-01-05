@@ -11,5 +11,6 @@ export default {
         notesFetchSuccess: 'NOTES_FETCH_SUCCESS',
         notesFetchFailure: 'NOTES_FETCH_FAILURE',
         updateNote: 'NOTES_UPDATE',
+        deleteNote: 'DELETE_NOTE',
     }
 }

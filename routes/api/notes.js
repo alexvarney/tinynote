@@ -57,7 +57,7 @@ router.put("/:noteID", async (req, res) => {
         user: req.user._id
       },
       req.body,
-      {new: true}
+      { new: true }
     )
       .then(doc => res.send(doc))
       .catch(err => {
@@ -71,7 +71,13 @@ router.put("/:noteID", async (req, res) => {
 });
 
 router.delete("/:noteID", async (req, res) => {
-  return res.status(501).send("Route not yet implemented!");
+
+  Note.findOneAndDelete({ _id: req.params.noteID, user: req.user._id })
+    .then(doc => res.status(200).send("Deleted!"))
+    .catch(err => {
+      res.status(400).send("Could not delete");
+      console.log(err);
+    });
 });
 
 module.exports = router;

@@ -38,7 +38,7 @@ const NoteList = styled.div`
 const NoteDisplay = styled.div`
   flex: 2 1 66vw;
   margin: 0.75rem;
-  padding: 1.5rem 2rem 1.5rem 2rem;
+  padding: 1.0rem 2rem 1.5rem 2rem;
   background: #fff;
   border-radius: 0.5rem;
   box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.1);

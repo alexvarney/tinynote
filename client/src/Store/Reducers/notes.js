@@ -31,6 +31,13 @@ export default (state = initialState, action) => {
           action.payload
         ]
       };
+    case actionTypes.notes.deleteNote:
+      return {
+        ...state,
+        notes: [
+          ...state.notes.filter(note => note._id !== action.payload),
+        ]
+      };
     default:
       return state;
   }

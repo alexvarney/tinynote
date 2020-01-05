@@ -40,3 +40,16 @@ export const updateNote = (note, token) => dispatch => {
 export const addNewNote = note => dispatch => {
   dispatch({type: actionTypes.notes.updateNote, payload: note})
 }
+
+export const deleteNote = (note, token) => dispatch => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  };
+
+  axios.delete(`/api/note/${note._id}`, config)
+    .then(res => dispatch({type: actionTypes.notes.deleteNote, payload: note._id}))
+    .catch(err => console.log(err))
+
+}
