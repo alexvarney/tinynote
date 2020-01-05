@@ -7,7 +7,7 @@ import Header from './Components/Header'
 import {loginWithToken} from './Store/Actions/auth'
 import UserManager from './Components/UserManager';
 import AdminEditor from './Components/auth/AdminEditor';
-import EditorLayout from './Components/Layout/EditorLayout';
+import EditorLayout from './Components/EditorLayout';
 
 function App() {
 
