@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer, useRef } from "react";
 import axios from "axios";
+import useInterval from "@use-it/interval";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import Editor, { theme } from "rich-markdown-editor";
@@ -7,6 +8,8 @@ import moment from "moment";
 
 import NoteListCard from "../NoteListCard";
 import TitleEditor from "../TitleEditor";
+
+import { fetchNotes, updateNote } from "../../Store/Actions/notes";
 
 //Styles
 
@@ -42,6 +45,7 @@ const editorTheme = {
   text: "#2E2E2E"
 };
 
+//Custom Hook for managing note updates
 const useNote = initialNote => {
   const noteReducer = (state, action) => {
     switch (action.type) {
@@ -90,42 +94,11 @@ const useNote = initialNote => {
 
 //Note Editor Component
 const EditorLayout = props => {
-  const [notes, setNotes] = useState([]);
-
-  //Save an updated note state to the above collection
-  const saveNoteLocally = note => {
-    setNotes(prevNotes => {
-      const filteredNotes = prevNotes.filter(
-        prevNote => prevNote._id !== note._id
-      );
-
-      const bodyValue =
-        typeof note.noteMarkdown === "function"
-          ? note.noteMarkdown()
-          : note.noteMarkdown;
-
-      filteredNotes.push({ ...note, noteMarkdown: bodyValue });
-
-      return filteredNotes;
-    });
-  };
-
-  //Download notes on component load
+  
+  //Fetch notes on login
   useEffect(() => {
     if (props.auth.loggedIn) {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${props.auth.token}`
-        }
-      };
-      axios
-        .get("/api/note/", config)
-        .then(res => {
-          setNotes(res.data);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      props.fetchNotes(props.auth.token);
     }
   }, [props.auth.loggedIn]);
 
@@ -133,22 +106,63 @@ const EditorLayout = props => {
   const [currentNote, noteMethods] = useNote(null);
 
   const selectNote = newNote => {
-    console.log(currentNote);
     if (currentNote) {
-      saveNoteLocally(currentNote);
+      saveNote();
     }
     noteMethods.setNote(newNote);
   };
 
+  const saveNote = () => {
+    if (currentNote) {
+      const bodyValue =
+        typeof currentNote.noteMarkdown === "function"
+          ? currentNote.noteMarkdown()
+          : currentNote.noteMarkdown;
+
+      const updatedNote = {
+        ...currentNote,
+        noteMarkdown: bodyValue
+      };
+
+      //Check if update is necessary
+      let savedNote = props.notes.notes.filter(
+        item => item._id === currentNote._id
+      )[0];
+
+      if (savedNote) {
+        savedNote = {
+          ...savedNote,
+          updatedAt: null
+        };
+      }
+      const _updatedNote = {
+        ...updatedNote,
+        updatedAt: null
+      };
+
+      if (
+        savedNote &&
+        JSON.stringify(savedNote) === JSON.stringify(_updatedNote)
+      ) {
+        return null;
+      }
+
+      props.updateNote(updatedNote, props.auth.token);
+    }
+  };
+
+  useInterval(saveNote, 2500);
+
   return (
     <FlexPanel>
       <NoteList>
-        {notes
+        {props.notes.notes
           .sort(
             (a, b) => moment(a.createdAt).unix() - moment(b.createdAt).unix()
           )
           .map(note => (
             <NoteListCard
+              selected={currentNote && note._id === currentNote._id}
               key={note._id}
               note={note}
               onClick={() => selectNote(note)}
@@ -159,8 +173,10 @@ const EditorLayout = props => {
         {currentNote && (
           <>
             <TitleEditor
+              note={currentNote}
               value={currentNote.noteTitle}
               onChange={noteMethods.onTitleChange}
+              onSave={saveNote}
             />
             <Editor
               onChange={noteMethods.onBodyChange}
@@ -176,7 +192,10 @@ const EditorLayout = props => {
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  notes: state.notes
 });
 
-export default connect(mapStateToProps, {})(EditorLayout);
+export default connect(mapStateToProps, { fetchNotes, updateNote })(
+  EditorLayout
+);
