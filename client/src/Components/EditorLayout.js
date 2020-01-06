@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import Editor, { theme } from "rich-markdown-editor";
 import moment from "moment";
 import Div100vh from "react-div-100vh";
+import PerfectScrollbar from '@opuscapita/react-perfect-scrollbar';
 
 import Header from "./Header";
 import NoteListCard from "./NoteListCard";
@@ -23,29 +24,29 @@ const FlexPanel = styled.div`
   display: flex;
   background-color: #f9f9f9;
   height: calc(100% - 3.55rem);
-  overflow: hidden;
 `;
 
-const NoteList = styled.div`
+const SidebarContainer = styled.div`
   flex: 1 0 20rem;
   max-width: 40rem;
   border-right: 1px solid #00000012;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  overflow-y: scroll;
   background-color: #f9f9f9;
-  height: inherit;
-  max-height: calc(100% - 3.55rem);
-
+  
   @media (max-width: 900px) {
     position: absolute;
     left: ${props => (props.showSidebar ? 0 : "-75vw")};
     z-index: 10;
     max-width: 75vw;
     transition: all 0.2s ease-out;
+    height: inherit;
   }
 `;
+
+const SidebarBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: 'flex-start';
+`
 
 const NoteDisplay = styled.div`
   flex: 2 1 66vw;
@@ -54,7 +55,7 @@ const NoteDisplay = styled.div`
   background: #fff;
   border-radius: 0.5rem;
   box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.1);
-  overflow-y: scroll;
+  overflow-x: hidden;
 
   h1 {
     font-family: "Roboto Slab", serif;
@@ -136,38 +137,47 @@ const EditorLayout = props => {
 
   //UI Logic
   const [showSidebar, setSidebarState] = useState(true);
-
+  const _setSidebarState = () => {
+    console.log('I was fired')
+    setSidebarState(true)
+  }
   return (
     <Div100vh>
       <Header />
       <FlexPanel>
-        <NoteList showSidebar={showSidebar}>
-          <HideButton
-            value="Hide"
-            onClick={() => setSidebarState(false)}
-            hidden={!currentNote}
-          >
-            Hide
-          </HideButton>
-          <Sidebar
-            notes={props.notes.notes}
-            selectNote={selectNote}
-            selectedNoteId={selectedNoteId}
-          >
-            <AddButton
-              value="+"
-              onClick={addNote}
-              className="btn btn-outline-secondary btn-sm"
+        <SidebarContainer showSidebar={showSidebar}>
+          <PerfectScrollbar>
+            <SidebarBody>
+            <HideButton
+              value="Hide"
+              onClick={() => setSidebarState(false)}
+              hidden={!currentNote}
             >
-              +
-            </AddButton>
-          </Sidebar>
-        </NoteList>
+              Hide
+            </HideButton>
+            <Sidebar
+              notes={props.notes.notes}
+              selectNote={selectNote}
+              selectedNoteId={selectedNoteId}
+            >
+              <AddButton
+                value="+"
+                onClick={addNote}
+                className="btn btn-outline-secondary btn-sm"
+              >
+                +
+              </AddButton>
+            </Sidebar>
+            </SidebarBody>
+          </PerfectScrollbar>
+        </SidebarContainer>
         <NoteDisplay>
-          <NoteEditor
-            noteId={selectedNoteId}
-            toggleSidebar={() => setSidebarState(true)}
-          />
+          <PerfectScrollbar option={{suppressScrollX: true}}>
+            <NoteEditor
+              noteId={selectedNoteId}
+              toggleSidebar={() => _setSidebarState(true)}
+            />
+          </PerfectScrollbar>
         </NoteDisplay>
       </FlexPanel>
     </Div100vh>
