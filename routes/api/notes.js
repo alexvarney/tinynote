@@ -25,11 +25,12 @@ router.get("/:noteID", async (req, res) => {
     const note = await Note.findById(req.params.noteID);
 
     //Check that user has permission to access note
-    if (!req.user._id.equals(note.user)) {
+    if (req.user._id.equals(note.user) || note.isPublic) {
+      return res.send(note);
+    } else {
       return res.status(401).send("You are not authorized to view this note.");
     }
-
-    return res.send(note);
+    
   } catch (error) {
     console.log(error);
     res.status(500).send("An error occurred.");
