@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 import store from './Store/store'
 import {BrowserRouter, Route, Switch} from 'react-router-dom'
 
-import Header from './Components/Header'
+
 import {loginWithToken} from './Store/Actions/auth'
 import UserManager from './Components/UserManager';
 import AdminEditor from './Components/auth/AdminEditor';
@@ -19,7 +19,6 @@ function App() {
     <BrowserRouter>
     <Provider store={store}>
       <div className="App">
-        <Header />
         <Switch>
           <Route exact path = "/" component={EditorLayout} />
           <Route path="/user" component={UserManager} />
