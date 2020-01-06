@@ -9,6 +9,7 @@ import useNote from "./useNote";
 import TitleEditor from "./TitleEditor";
 import { updateNote, deleteNote } from "../Store/Actions/notes";
 
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -22,6 +23,7 @@ const TimestampContainer = styled.div`
   width: 100%;
   font-family: "Open Sans", sans-serif;
   font-weight: 200;
+  font-size: 12px;
   color: #838383;
   border-top: 1px solid rgba(0, 0, 0, 0.07);
   margin: 1rem 0 0 0.5rem;
@@ -36,19 +38,28 @@ const OptionsContainer = styled.div`
   margin-bottom: 1.5rem;
   font-family: "Open Sans", sans-serif;
   justify-content: flex-end;
-  span {
+  user-select: none;
+  span.divider {
+    display: inline-block;
+    flex: 1 1 0;
+  }
+  button.menuButton {
     border-radius: 5px;
     background: #e6ebee;
-    margin-left: 0.25rem;
     padding: 0.1rem 0.5rem 0.1rem 0.5rem;
     margin-bottom: 0.25rem;
     cursor: pointer;
     font-size: 14px;
+    border: none;
   }
-  span:hover{
-
+  button.menuButton:hover {
     background: #cdd6dc;
-    color: #fff;
+  }
+`;
+
+export const MobileOnly = styled.div`
+  @media (min-width: 900px) {
+    display: none;
   }
 `;
 
@@ -59,7 +70,7 @@ const editorTheme = {
 };
 
 function NoteEditor(props) {
-  const { noteId, auth, notes } = props;
+  const { noteId, auth, notes, toggleSidebar } = props;
   const [selectedNote, noteMethods] = useNote(null);
 
   const saveNote = () => {
@@ -150,6 +161,7 @@ function NoteEditor(props) {
       if (auth.loggedIn) {
         props.deleteNote(selectedNote, auth.token);
         noteMethods.setNote(null);
+        toggleSidebar();
       }
     }
   };
@@ -161,8 +173,15 @@ function NoteEditor(props) {
       {selectedNote && (
         <>
           <OptionsContainer>
-            <span onClick={deleteNote}>Delete Note</span>
-            <span>Publish Note</span>
+            <MobileOnly>
+              <button className="menuButton" onClick={toggleSidebar}>
+                <i className="fas fa-bars"></i> Notes
+              </button>
+            </MobileOnly>
+            <span className="divider" />
+            <button className="menuButton" onClick={deleteNote}>
+              Delete Note
+            </button>
           </OptionsContainer>
           <TitleEditor
             note={selectedNote}
